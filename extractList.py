@@ -20,9 +20,15 @@ root = tree.getroot()
 #Etat de visionnage de la série
 #print(root[1][12].text)
 
+nom = []
 id = []
 score = []
 etat = []
+
+#Récupération de tous les noms dans une liste
+for titre in root.iter("series_title"):
+    # print(identifiant.text)
+    nom.append(titre.text)
 
 #Récupération de tous les identifiants dans une liste
 for identifiant in root.iter("series_animedb_id"):
@@ -36,3 +42,17 @@ for note in root.iter("my_score"):
 #Récupération de tous les statuts de visionnage dans une liste
 for statut in root.iter("my_status"):
     etat.append(statut.text)
+
+
+#Création d'une dataframe
+
+anime_df = pd.DataFrame(
+    list(zip(
+        nom,id, score, etat
+    )),
+    columns=["Nom","Identifiant", "Note", "Statut"]
+)
+
+#Sauvegarde de la dataframe au format CSV
+
+anime_df.to_csv("animelist.csv")
