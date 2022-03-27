@@ -3,6 +3,15 @@ import numpy as np
 import xml.etree.ElementTree as et
 
 def recupFichier(nom, id, score, etat):
+    """Cette fonction récupère les éléments spécifiés en argument dans le fichier XML
+
+    Args:
+        nom (list): Liste des noms des animes
+        id (list): Liste des id des animes
+        score (list): Liste des scores des animes
+        etat (list): Liste des états de visionnages des animes
+    """
+
     # Récupération du nom du fichier
     tree = et.parse("animelist.xml")
 
@@ -31,6 +40,14 @@ def recupFichier(nom, id, score, etat):
 
 
 def createDataFrame(nom, id, score, etat):
+    """Cette fonction génère un dataframe à partir des listes passées en argument
+
+    Args:
+        nom (list): Liste des noms des animes
+        id (list): Liste des id des animes
+        score (list): Liste des scores des animes
+        etat (list): Liste des états de visionnages des animes
+    """
     #Création d'une dataframe
     anime_df = pd.DataFrame(
         list(zip(
@@ -40,6 +57,16 @@ def createDataFrame(nom, id, score, etat):
     )
 
 def saveCSV(dataframe):
-    #Sauvegarde de la dataframe au format CSV
+    """Cette fonction génère un fichier CSV à partir du dataframe
+
+    Args:
+        dataframe (DataFrame): DataFrame simplifié des animes récupérés depuis le XML
+    """
+    #Sauvegarde du dataframe au format CSV
     dataframe.to_csv("animelist.csv")
 
+nom=[]
+id=[]
+score=[]
+etat=[]
+recupFichier(nom, id, score, etat)
