@@ -64,9 +64,3 @@ def saveCSV(dataframe):
     """
     #Sauvegarde du dataframe au format CSV
     dataframe.to_csv("animelist.csv")
-
-nom=[]
-id=[]
-score=[]
-etat=[]
-recupFichier(nom, id, score, etat)
