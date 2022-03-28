@@ -1,5 +1,3 @@
-dico={}
-
 def iterFrequence(dico, objet):
     """Augmente la fréquence d'apparition de l'objet passé en argument
 
