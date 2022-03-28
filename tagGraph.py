@@ -35,13 +35,3 @@ def cloudDico(dico):
     plt.axis("off")
     plt.margins(x=0, y=0)
     plt.show()
-
-nom=[]
-id=[]
-score=[]
-etat=[]
-
-recupFichier(nom, id, score, etat)
-
-
-
