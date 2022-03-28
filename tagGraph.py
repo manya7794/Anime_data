@@ -16,7 +16,7 @@ def cloud(objet):
     listeObjet=(" ").join(objet)
 
     #Création du wordcloud
-    wordcloud = WordCloud(width=480, height=480, margin=0).generate(listeObjet)
+    wordcloud = WordCloud(width=800, height=400).generate(listeObjet)
 
     #Affichage de l'image obtenue
     plt.imshow(wordcloud, interpolation="bilinear")
@@ -30,8 +30,10 @@ def cloudDico(dico):
     Args:
         dico (dict): Dictionnaire contenant les mots et leur fréquence
     """
-    wordcloud = WordCloud(collocations=False).generate_from_frequencies(dico)
+    wordcloud = WordCloud(width=800, height=400).generate_from_frequencies(dico)
+    plt.figure(figsize=(20,10), facecolor='k')
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.margins(x=0, y=0)
+    plt.tight_layout(pad=0)
+    #plt.margins(x=0, y=0)
     plt.show()
