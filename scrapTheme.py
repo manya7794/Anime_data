@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from progressbar import ProgressBar
+pbar = ProgressBar()
 
 from dico import *
 
@@ -32,5 +34,5 @@ def recupFromList(dico, idList):
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
         idList (List): Liste d'identifiant des animes
     """
-    for id in idList:
+    for id in pbar(idList):
         recupThemes(dico, id)
