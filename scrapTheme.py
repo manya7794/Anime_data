@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 from dico import *
 
-def RecupThemes(dico, id):
+def recupThemes(dico, id):
     """Récupération des themes depuis la page web de l'anime
 
     Args:
@@ -24,3 +24,13 @@ def RecupThemes(dico, id):
     genre=soup.find_all(itemprop="genre")
     for theme in genre:
         ajoutTheme(dico, theme.text.strip())
+
+def recupFromList(dico, idList): 
+    """Récupération des thèmes d'une liste d'animes
+
+    Args:
+        dico (dict): Dictionnaire contenant les thèmes et leur fréquence
+        idList (List): Liste d'identifiant des animes
+    """
+    for id in idList:
+        recupThemes(dico, id)
