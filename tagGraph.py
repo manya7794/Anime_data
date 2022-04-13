@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 dico = {}
 
 
-def cloud(objet):
+def nuage_de_mot(objet):
     """Affichage du wordcloud correspondant à la liste passée en argument
 
     Args:
@@ -24,7 +24,7 @@ def cloud(objet):
     plt.show()
 
 
-def cloudDico(dico):
+def nuage_de_mot_dico(dico):
     """Affichage du nuage de mots depuis un dictionnaire
 
     Args:

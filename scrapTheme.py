@@ -1,11 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from progressbar import ProgressBar
+
 pbar = ProgressBar()
 
-from dico import *
+from dico import ajout_theme
 
-def recupThemes(dico, id):
+
+def recupere_themes(dico, id):
     """Récupération des themes depuis la page web de l'anime
 
     Args:
@@ -13,26 +15,27 @@ def recupThemes(dico, id):
         id (int): Identifiant de l'anime
     """
 
-    #URL de la page à scrap
-    URL = "https://myanimelist.net/anime/"+str(id)
+    # URL de la page à scrap
+    URL = "https://myanimelist.net/anime/" + str(id)
 
-    #Récupération du contenu de la page
+    # Récupération du contenu de la page
     page = requests.get(URL)
 
-    #Parsing de la page
+    # Parsing de la page
     soup = BeautifulSoup(page.content, "html.parser")
 
-    #Récupération de tous les genres de l'anime
-    genre=soup.find_all(itemprop="genre")
+    # Récupération de tous les genres de l'anime
+    genre = soup.find_all(itemprop="genre")
     for theme in genre:
-        ajoutTheme(dico, theme.text.strip())
+        ajout_theme(dico, theme.text.strip())
 
-def recupFromList(dico, idList): 
+
+def recupere_from_list(dico, liste_identifiants):
     """Récupération des thèmes d'une liste d'animes
 
     Args:
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
-        idList (List): Liste d'identifiant des animes
+        liste_identifiants (List): Liste d'identifiant des animes
     """
-    for id in pbar(idList):
-        recupThemes(dico, id)
+    for id in pbar(liste_identifiants):
+        recupere_themes(dico, id)
