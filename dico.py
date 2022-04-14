@@ -1,3 +1,6 @@
+from operator import truediv
+
+
 def iteration_frequence_theme(dico, theme_cherche):
     """Augmente la fréquence d'apparition du thême cherché passé en argument
 
@@ -17,7 +20,7 @@ def ajout_theme(dico, theme_cherche):
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
         theme_cherche (String): Thême à ajouter dans le dictionnaire
     """
-    # Booléen vérifiant l'existence de l'theme_cherche
+    # Booléen vérifiant l'existence de theme_cherche
     existe = False
 
     for theme in dico:
@@ -31,3 +34,19 @@ def ajout_theme(dico, theme_cherche):
     if existe is False:
         # Création du theme
         dico[theme_cherche] = 1
+
+
+def ajout_note(scores, dico):
+    """Ajout de la note si celle-ci n'existe pas dans le dictionnaire
+
+    Args:
+        scores (list): Liste des scores à ajouter dans le dictionnaire
+        dico (dict): Dictionnaire contenant les notes et leur fréquence
+    """
+    for score in scores:
+        # Booléen vérifiant l'existence de la note_cherchee
+        existe = False
+
+        for key in dico.keys():
+            if key == str(score):
+                dico[key] += 1

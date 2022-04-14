@@ -125,10 +125,11 @@ def sauvegarde_liste(nom, id, score, etat):
         choix_sauvegarde = input("Voulez-vous sauvegarder au format CSV ? (Y/N) \n")
         # Cas où l'utilisateur choisit de sauvegarder
         if choix_sauvegarde == "Y":
-            create_data_frame(nom, id, score, etat)
+            anime_dataframe = create_dataframe_liste(nom, id, score, etat)
+            sauvegarde_csv(anime_dataframe)
 
 
-def create_data_frame(nom, id, score, etat):
+def create_dataframe_liste(nom, id, score, etat):
     """Cette fonction génère un dataframe à partir des listes passées en argument
 
     Args:
@@ -143,7 +144,17 @@ def create_data_frame(nom, id, score, etat):
         columns=["Nom", "Identifiant", "Note", "Statut"],
     )
     # Sauvegarde de la dataframe au format CSV
-    sauvegarde_csv(anime_dataframe)
+    return anime_dataframe
+
+
+def create_dataframe_notes(score_id, score_frequence):
+    """Cette fonction génère un dataframe à partir des score attribuées à chaque anime
+
+    Args:
+        score (list): Liste des scores des animes
+    """
+    notes_dataframe = pd.DataFrame({"Notes": score_id, "Frequence": score_frequence})
+    return notes_dataframe
 
 
 def sauvegarde_csv(dataframe):

@@ -1,8 +1,8 @@
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-
-dico = {}
+from extractList import create_dataframe_notes
 
 
 def nuage_de_mot(objet):
@@ -36,4 +36,18 @@ def nuage_de_mot_dico(dico):
     plt.axis("off")
     plt.tight_layout(pad=0)
     # plt.margins(x=0, y=0)
+    plt.show()
+
+
+def histogramme_notes(dico):
+    """Affichage de l'histogramme des notes
+
+    Args:
+        dico (dict): Dictionnaire contenant les notes et leur fréquence
+    """
+    # Création de la dataframe
+    notes = create_dataframe_notes(dico.keys(), dico.values())
+    # Création de l'histogramme
+    sns.barplot(x=notes.Notes, y=notes.Frequence, data=notes)
+    # Affichage de l'histogramme
     plt.show()
