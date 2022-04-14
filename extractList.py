@@ -3,14 +3,11 @@ import xml.etree.ElementTree as et
 import csv
 
 
-def choix_recuperation_donnees(nom, id, score, etat):
+def choix_recuperation_donnees(liste_anime):
     """Fonction permettant à l'utilisateur de sélectionner le fichier depuis lequel les données sont récupérées
 
     Args:
-        nom (list): Liste des noms des animes
-        id (list): Liste des id des animes
-        score (list): Liste des scores des animes
-        etat (list): Liste des états de visionnages des animes
+        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
     """
     choix_utilisateur = ""
     fichier = ""
@@ -28,24 +25,27 @@ def choix_recuperation_donnees(nom, id, score, etat):
     if choix_utilisateur == "1":
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".xml"
-        recupere_donnees_xml(fichier, nom, id, score, etat)
+        recupere_donnees_xml(fichier, liste_anime)
 
     # Cas où l'utilisateur veut récupérer depuis un fichier csv
     if choix_utilisateur == "2":
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".csv"
-        recupere_donnees_csv(fichier, nom, id, score, etat)
+        recupere_donnees_csv(
+            fichier,
+            liste_anime.nom,
+            liste_anime.id,
+            liste_anime.score,
+            liste_anime.etat,
+        )
 
 
-def recupere_donnees_xml(fichier_xml, nom, id, score, etat):
+def recupere_donnees_xml(fichier_xml, liste_anime):
     """Cette fonction récupère les éléments spécifiés en argument dans le fichier XML
 
     Args:
         fichier_xml(String): Nom du fichier XML
-        nom (list): Liste des noms des animes
-        id (list): Liste des id des animes
-        score (list): Liste des scores des animes
-        etat (list): Liste des états de visionnages des animes
+        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
     """
     # Récupération du nom du fichier
     tree = et.parse(fichier_xml)
@@ -56,33 +56,28 @@ def recupere_donnees_xml(fichier_xml, nom, id, score, etat):
     # Récupération de tous les noms dans une liste
     for titre in root.iter("series_title"):
         # print(identifiant.text)
-        nom.append(titre.text)
+        liste_anime.nom.append(titre.text)
 
     # Récupération de tous les identifiants dans une liste
     for identifiant in root.iter("series_animedb_id"):
         # print(identifiant.text)
-        id.append(identifiant.text)
+        liste_anime.id.append(identifiant.text)
 
     # Récupération de toutess les notes dans une liste
     for note in root.iter("my_score"):
-        score.append(note.text)
+        liste_anime.score.append(note.text)
 
     # Récupération de tous les statuts de visionnage dans une liste
     for statut in root.iter("my_status"):
-        etat.append(statut.text)
-
-    return (nom, id, score, etat)
+        liste_anime.etat.append(statut.text)
 
 
-def recupere_donnees_csv(fichier_csv, nom, id, score, etat):
+def recupere_donnees_csv(fichier_csv, liste_anime):
     """Cette fonction récupère les éléments spécifiés en argument dans le fichier XML
 
     Args:
         fichier_csv(String): Nom du fichier csv
-        nom (list): Liste des noms des animes
-        id (list): Liste des id des animes
-        score (list): Liste des scores des animes
-        etat (list): Liste des états de visionnages des animes
+        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
     """
     # Ouverture du fichier en lecture
     with open(fichier_csv) as fichier:
@@ -99,14 +94,12 @@ def recupere_donnees_csv(fichier_csv, nom, id, score, etat):
             # Lecture des lignes du document
             else:
                 # Récupération des différentes données
-                nom.append(colonne[1])
-                id.append(colonne[2])
-                score.append(colonne[3])
-                etat.append(colonne[4])
+                liste_anime.nom.append(colonne[1])
+                liste_anime.id.append(colonne[2])
+                liste_anime.score.append(colonne[3])
+                liste_anime.etat.append(colonne[4])
                 # Passage à la ligne suivante
                 ligne += 1
-
-        return (nom, id, score, etat)
 
 
 def sauvegarde_liste(nom, id, score, etat):

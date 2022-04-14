@@ -1,48 +1,28 @@
 from dico import ajout_note, ajout_theme
-from extractList import (
-    choix_recuperation_donnees,
-    create_dataframe_notes,
-    sauvegarde_liste,
-)
+from extractList import choix_recuperation_donnees, sauvegarde_liste
+from listeAnime import listeAnime
 from scrapTheme import recupere_from_list
 from tagGraph import histogramme_notes, nuage_de_mot_dico
 
-nom = []
-id = []
-score = []
-etat = []
+liste_complete = listeAnime()
 
 # Récupération des listes
-choix_recuperation_donnees(nom, id, score, etat)
-
-# Création du dictonnaire de themes
-themes = {}
-# Création du dictionnaire de notes
-notes = {
-    "0": 0,
-    "1": 0,
-    "2": 0,
-    "3": 0,
-    "4": 0,
-    "5": 0,
-    "6": 0,
-    "7": 0,
-    "8": 0,
-    "9": 0,
-    "10": 0,
-}
+choix_recuperation_donnees(liste_complete)
 
 # Initialisation des themes
-recupere_from_list(themes, id)
+recupere_from_list(liste_complete.themes, liste_complete.id)
 
 # Affichage du nuage de mots
-nuage_de_mot_dico(themes)
+nuage_de_mot_dico(liste_complete.themes)
 
 # Sauvegarde de la liste
-sauvegarde_liste(nom, id, score, etat)
+sauvegarde_liste(
+    liste_complete.nom, liste_complete.id, liste_complete.score, liste_complete.etat
+)
+
 
 # Récupération des notes dans le dictionnaire
-ajout_note(score, notes)
+ajout_note(liste_complete.score, liste_complete.notes)
 
 # Affichage de l'histogramme des notes
-histogramme_notes(notes)
+histogramme_notes(liste_complete.notes)
