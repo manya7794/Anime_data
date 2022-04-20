@@ -100,6 +100,13 @@ def recupere_donnees_csv(fichier_csv, liste_anime):
 
 
 def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
+    """Fonction permettant à l'utilisateur de sélectionner les animes qu'il souhaite récupérer selon leur statut
+
+    Args:
+        liste_anime (listeAnime): Liste allant contenir tous les animes et leurs attributs
+        lien_api (String, optional): Lien de l'API. Defaults to None.
+        params (dict, optional): Paramètres de sélection. Defaults to None.
+    """
     # Clé d'API
     headers = {
         "X-MAL-CLIENT-ID": api_key,
@@ -129,9 +136,6 @@ def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
     # Convertit la réponse en fichier json
     reponse_json = reponse.json()
 
-    # print("Affichage avant récupération des données")
-    # print(reponse_json)
-
     # Ajout des animes à la liste d'anime
     recupere_donnees_api(reponse_json, liste_anime)
 
@@ -141,37 +145,46 @@ def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
     if "next" in pagination:
         # Recupération du lien nettoyé
         lien_page_suivante = pagination["next"]
-        # print(f"Lien nettoyé : {lien_page_suivante}")
+
         # Appel récursif de la fonction
         choix_recuperation_donnees_api(liste_anime, lien_api=lien_page_suivante)
 
 
 def recupere_donnees_api(reponse_json, liste_anime):
+    """Cette fonction récupère les éléments spécifiés pour chaque anime via l'API
+
+    Args:
+        reponse_json (String): Données au format JSON
+        liste_anime (listeAnime): Liste allant contenir tous les animes et leurs attributs
+    """
     reponse_json_dump = json.dumps(reponse_json)
 
     dict_data = json.loads(reponse_json_dump)
 
     for element in dict_data["data"]:
-        # print(element)
-        # Affiche le titre
-        # print(f"\nTitre : {element['node']['title']}")
+
         # Ajout du titre à la liste d'anime
         liste_anime.nom.append(element["node"]["title"])
 
-        # Affiche l'identifiant
-        # print(f"Identifiant :{element['node']['id']}")
         # Ajout de l'identifiant à la liste d'anime
         liste_anime.id.append(element["node"]["id"])
 
-        # Affiche le score
-        # print(f"Score : {element['list_status']['score']}")
         # Ajout du score à la liste d'anime
         liste_anime.score.append(element["list_status"]["score"])
 
-        # Affiche l'état de visionnage
-        # print(f"Etat de visionnage : {element['list_status']['status']}")
         # Ajout de l'état de visionnage à la liste d'anime
-        liste_anime.etat.append(element["list_status"]["status"])
+        statut = element["list_status"]["status"]
+        if statut == "watching":
+            statut = "Watching"
+        if statut == "completed":
+            statut = "Completed"
+        if statut == "on_hold":
+            statut = "On-Hold"
+        if statut == "dropped":
+            statut = "Dropped"
+        if statut == "plan_to_watch":
+            statut = "Plan to Watch"
+        liste_anime.etat.append(statut)
 
 
 def sauvegarde_liste(nom, id, score, etat):

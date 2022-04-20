@@ -7,7 +7,7 @@ from extractList import (
     sauvegarde_liste,
 )
 from scrapTheme import recupere_from_list
-from tagGraph import histogramme_notes, nuage_de_mot_dico
+from tagGraph import diagramme_circulaire_notes, histogramme_notes, nuage_de_mot_dico
 import numpy as np
 
 
@@ -86,7 +86,7 @@ class listeAnime:
                 print("2. Depuis l'API")
                 choix_utilisateur = input()
 
-            if choix_utilisateur == 1:
+            if choix_utilisateur == "1":
                 choix_recuperation_donnees_fichier(self)
             else:
                 choix_recuperation_donnees_api(self, params=True)
@@ -112,6 +112,10 @@ class listeAnime:
     def histogramme_notes(self):
         """Affichage de l'histogramme des notes"""
         histogramme_notes(self.notes)
+
+    def diagramme_circulaire_notes(self):
+        """Affichage du diagramme circulaire des notes"""
+        diagramme_circulaire_notes(self.notes)
 
     def sauvegarde(self):
         sauvegarde_liste(
@@ -172,6 +176,8 @@ class listeAnime:
             id=id_nouvelle_liste,
             score=score_nouvelle_liste,
             etat=etat_nouvelle_liste,
+            recupere_donnees_fichier=False,
+            recupere_donnees_api=False,
         )
         return nouvelle_liste_anime
 
@@ -231,3 +237,25 @@ class listeAnime:
 
                 # Affichage de l'histogramme des notes
                 self.histogramme_notes()
+
+        # Reset du choix de l'utilisateur
+        choix_utilisateur = ""
+        while choix_utilisateur != "Y" and choix_utilisateur != "N":
+            # Récupération du choix de l'utilisateur
+            if nom_affiche_liste is not None:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser le diagramme circulaire des notes de la liste des "
+                    + nom_affiche_liste
+                    + " ? (Y/N)\n"
+                )
+            else:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser le diagramme circulaire des notes de la liste complète ? (Y/N)\n"
+                )
+            # Cas où l'utilisateur choisit de sauvegarder
+            if choix_utilisateur == "Y":
+                # Récupération des notes dans le dictionnaire
+                self.set_notes()
+
+                # Affichage de l'histogramme des notes
+                self.diagramme_circulaire_notes()

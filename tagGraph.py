@@ -51,3 +51,17 @@ def histogramme_notes(dico):
     sns.barplot(x=notes.Notes, y=notes.Frequence, data=notes)
     # Affichage de l'histogramme
     plt.show()
+
+
+def diagramme_circulaire_notes(dico):
+    """Affichage du diagramme circulaire des notes
+
+    Args:
+        dico (Dict): Dictionnaire contenant les notes et leur féquence
+    """
+    # Création de la dataframe
+    notes = create_dataframe_notes(dico.keys(), dico.values())
+    colors = sns.color_palette("pastel")[0:9]
+    # Création du diagramme circulaire
+    plt.pie(notes.Frequence, labels=notes.Notes, colors=colors, autopct="%.0f%%")
+    plt.show()
