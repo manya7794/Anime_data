@@ -1,7 +1,24 @@
-from extractList import extraire_nouvelle_liste_personnalisee
+import json
+import requests
+from extractList import extraire_nouvelle_liste_personnalisee, affiche_liste_api
 from listeAnime import listeAnime
+from config import api_key, user_name
 
-liste_complete = listeAnime(recupere_donnees_fichier=True)
+# Clé d'API
+headers = {
+    "X-MAL-CLIENT-ID": api_key,
+}
+# Paramètres de sélection
+params = {"offset": "0", "fields": "list_status"}
+# Lien de l'API
+lien_api = f"https://api.myanimelist.net/v2/users/{user_name}/animelist"
+
+
+liste_complete = listeAnime()
+
+# liste_complete = listeAnime(recupere_donnees_fichier=True)
+
+# liste_complete = listeAnime(recupere_donnees_api=True)
 
 liste_complete.menu_liste_anime()
 
@@ -11,4 +28,4 @@ liste_personnalisee = extraire_nouvelle_liste_personnalisee(liste_complete)
 if liste_personnalisee is not None:
     liste_personnalisee.menu_liste_anime()
 
-print("Fin du programme")
+print("\nFin du programme")

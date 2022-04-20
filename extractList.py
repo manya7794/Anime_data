@@ -1,9 +1,12 @@
+import json
 import pandas as pd
 import xml.etree.ElementTree as et
 import csv
+import requests
+from config import api_key
 
 
-def choix_recuperation_donnees(liste_anime):
+def choix_recuperation_donnees_fichier(liste_anime):
     """Fonction permettant à l'utilisateur de sélectionner le fichier depuis lequel les données sont récupérées
 
     Args:
@@ -94,6 +97,81 @@ def recupere_donnees_csv(fichier_csv, liste_anime):
                 liste_anime.etat.append(colonne[4])
                 # Passage à la ligne suivante
                 ligne += 1
+
+
+def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
+    # Clé d'API
+    headers = {
+        "X-MAL-CLIENT-ID": api_key,
+    }
+
+    # Paramètres de sélection
+    if params is not None and params is True:
+        params = {"offset": "0", "fields": "list_status"}
+
+    # Lien de l'API
+    if lien_api is None:
+        # Récupération du nom de l'utilisateur à rechercher
+        user_name = input("Entrez le nom de l'utilisateur :")
+        # Création du lien de l'api
+        lien_api = f"https://api.myanimelist.net/v2/users/{user_name}/animelist"
+
+    # Création de la requête vers l'API
+    reponse = requests.get(
+        # Adresse de la demande
+        lien_api,
+        # Ajout des headers
+        headers=headers,
+        # Ajout des paramètres
+        params=params,
+    )
+
+    # Convertit la réponse en fichier json
+    reponse_json = reponse.json()
+
+    # print("Affichage avant récupération des données")
+    # print(reponse_json)
+
+    # Ajout des animes à la liste d'anime
+    recupere_donnees_api(reponse_json, liste_anime)
+
+    # Parcours des pages suivantes
+    pagination = reponse_json["paging"]
+    # Récupération du lien vers la liste suivante
+    if "next" in pagination:
+        # Recupération du lien nettoyé
+        lien_page_suivante = pagination["next"]
+        # print(f"Lien nettoyé : {lien_page_suivante}")
+        # Appel récursif de la fonction
+        choix_recuperation_donnees_api(liste_anime, lien_api=lien_page_suivante)
+
+
+def recupere_donnees_api(reponse_json, liste_anime):
+    reponse_json_dump = json.dumps(reponse_json)
+
+    dict_data = json.loads(reponse_json_dump)
+
+    for element in dict_data["data"]:
+        # print(element)
+        # Affiche le titre
+        # print(f"\nTitre : {element['node']['title']}")
+        # Ajout du titre à la liste d'anime
+        liste_anime.nom.append(element["node"]["title"])
+
+        # Affiche l'identifiant
+        # print(f"Identifiant :{element['node']['id']}")
+        # Ajout de l'identifiant à la liste d'anime
+        liste_anime.id.append(element["node"]["id"])
+
+        # Affiche le score
+        # print(f"Score : {element['list_status']['score']}")
+        # Ajout du score à la liste d'anime
+        liste_anime.score.append(element["list_status"]["score"])
+
+        # Affiche l'état de visionnage
+        # print(f"Etat de visionnage : {element['list_status']['status']}")
+        # Ajout de l'état de visionnage à la liste d'anime
+        liste_anime.etat.append(element["list_status"]["status"])
 
 
 def sauvegarde_liste(nom, id, score, etat):
@@ -213,3 +291,38 @@ def extraire_nouvelle_liste_personnalisee(liste_anime):
         # Cas où l'utilisateur choisit de ne pas créer de nouvelle liste
         if choix_utilisateur == "N":
             return None
+
+
+def affiche_liste_api(lien, headers, params=None):
+    """_summary_
+
+    Args:
+        lien (String): Lien de l'API
+        headers (Dict): Header à passer en argument pour la requête via l'API
+        params (Dict, optional): Paramètres de sélection. Defaults to None.
+    """
+
+    # Création de la requête vers l'API
+    reponse = requests.get(
+        # Adresse de la demande
+        lien,
+        # Ajout des headers
+        headers=headers,
+        # Ajout des paramètres
+        params=params,
+    )
+    print("\n")
+    # Convertit la réponse en fichier json
+    reponse_json = reponse.json()
+    # Affiche le json de manière lisible
+    print(json.dumps(reponse_json, indent=4, sort_keys=True))
+
+    # Parcours des pages suivantes
+    pagination = reponse_json["paging"]
+    # Récupération du lien vers la liste suivante
+    if "next" in pagination:
+        # Recupération du lien nettoyé
+        lien_page_suivante = pagination["next"]
+        print(f"Lien nettoyé : {lien_page_suivante}")
+        # Appel récursif de la fonction
+        affiche_liste_api(lien_page_suivante, headers)

@@ -1,7 +1,11 @@
 import enum
 from turtle import st
 from dico import ajout_note
-from extractList import choix_recuperation_donnees, sauvegarde_liste
+from extractList import (
+    choix_recuperation_donnees_fichier,
+    choix_recuperation_donnees_api,
+    sauvegarde_liste,
+)
 from scrapTheme import recupere_from_list
 from tagGraph import histogramme_notes, nuage_de_mot_dico
 import numpy as np
@@ -16,6 +20,7 @@ class listeAnime:
         etat=None,
         themes=None,
         recupere_donnees_fichier=None,
+        recupere_donnees_api=None,
     ):
         """Constructeur de la classe listeAnime
 
@@ -26,6 +31,8 @@ class listeAnime:
             etat (List, optional): Liste des états de visionnage des animes. Defaults to None.
             themes (Dict, optional): Dictionnaire des thèmes des animes. Defaults to None.
             recupere_donnees_fichier (boolean, optional): Choisit ou non de récupérer les données depuis un fichier.
+            Defaults to None.
+            recupere_donnees_api (boolean, optional): Choisit ou non de récupérer les données depuis l'API.
             Defaults to None.
         """
         if nom is not None:
@@ -65,7 +72,24 @@ class listeAnime:
         }
         if recupere_donnees_fichier is not None and recupere_donnees_fichier is True:
             # Récupération des listes
-            choix_recuperation_donnees(self)
+            choix_recuperation_donnees_fichier(self)
+        if recupere_donnees_api is not None and recupere_donnees_api is True:
+            # Récupération des listes
+            choix_recuperation_donnees_api(self, params=True)
+        if recupere_donnees_fichier is None and recupere_donnees_api is None:
+            # Récupération du choix de l'utilisateur
+            choix_utilisateur = ""
+
+            while choix_utilisateur != "1" and choix_utilisateur != "2":
+                print("Comment souhaitez-vous récupérer la liste des animes")
+                print("1. Depuis un fichier (XML ou CSV)")
+                print("2. Depuis l'API")
+                choix_utilisateur = input()
+
+            if choix_utilisateur == 1:
+                choix_recuperation_donnees_fichier(self)
+            else:
+                choix_recuperation_donnees_api(self, params=True)
 
     def set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""
