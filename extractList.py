@@ -215,6 +215,9 @@ def create_dataframe_liste(nom, id, score, etat):
         id (list): Liste des id des animes
         score (list): Liste des scores des animes
         etat (list): Liste des états de visionnages des animes
+
+    Returns:
+        anime_dataframe: Dataframe contenant les animes et leurs caractéristiques
     """
     # Création d'une dataframe
     anime_dataframe = pd.DataFrame(
@@ -229,10 +232,65 @@ def create_dataframe_notes(score_id, score_frequence):
     """Cette fonction génère un dataframe à partir des score attribuées à chaque anime
 
     Args:
-        score (list): Liste des scores des animes
+        score_id (list): Liste des scores des animes
+        score_frequence (list): Liste des fréquences de chaque score
+
+    Returns:
+        notes_dataframe: Dataframe contenant les notes et leur fréquence
     """
     notes_dataframe = pd.DataFrame({"Notes": score_id, "Frequence": score_frequence})
     return notes_dataframe
+
+
+def create_dataframe_statut(statuts, statuts_frequence):
+    """Cette fonction génère un dataframe à partir des statuts de visionnage de chaque anime
+
+    Args:
+        statuts (List): Liste des statuts des animes
+        statuts_frequence (List): Liste des fréquences de chaque statut
+
+     Returns:
+        dataframe: Dataframe contenant les statuts et leur fréquence
+    """
+    statut_dataframe = pd.DataFrame({"Statut": statuts, "Frequence": statuts_frequence})
+    return statut_dataframe
+
+
+def recupere_annee_sortie_api(id_anime):
+    # Clé d'API
+    headers = {
+        "X-MAL-CLIENT-ID": api_key,
+    }
+    reponse = requests.get(
+        f"https://api.myanimelist.net/v2/anime/{id_anime}?fields=start_season,status",
+        headers=headers,
+    )
+    # Conversion de la réponse au format json
+    reponse_json = reponse.json()
+    # Dump de la réponse
+    reponse_json_dump = json.dumps(reponse_json)
+    # Enregistrement du dump dans un dictionnaire
+    dict_data = json.loads(reponse_json_dump)
+    # Renvoi de l'année de sortie
+    if dict_data["status"] != "not_yet_aired":
+        # print(dict_data["start_season"]["year"])
+        return dict_data["start_season"]["year"]
+
+
+def create_dataframe_annees_sorties(annees, annees_frequence):
+    """Cette fonction génèe un dataframe à partir des annnées de sortie de chaque anime
+
+    Args:
+        annees (List): Liste des années de sortie des animes
+        annees_frequence (List): Liste des fréquences de chaque année
+
+    Returns:
+        dataframe: Dataframe contenant les années et leur fréquence
+    """
+    annees_sortie_dataframe = pd.DataFrame(
+        {"Annee": annees, "Frequence": annees_frequence}
+    )
+    return annees_sortie_dataframe
 
 
 def sauvegarde_csv(dataframe):

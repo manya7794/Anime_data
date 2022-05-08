@@ -1,4 +1,8 @@
 from operator import truediv
+from extractList import recupere_annee_sortie_api
+from progressbar import ProgressBar
+
+pbar = ProgressBar()
 
 
 def iteration_frequence_theme(dico, theme_cherche):
@@ -36,17 +40,52 @@ def ajout_theme(dico, theme_cherche):
         dico[theme_cherche] = 1
 
 
-def ajout_note(scores, dico):
+def ajout_note(notes, dico_notes):
     """Ajout de la note si celle-ci n'existe pas dans le dictionnaire
 
     Args:
-        scores (list): Liste des scores à ajouter dans le dictionnaire
+        notes (list): Liste des notes à ajouter dans le dictionnaire
         dico (dict): Dictionnaire contenant les notes et leur fréquence
     """
-    for score in scores:
-        # Booléen vérifiant l'existence de la note_cherchee
-        existe = False
+    # Parcours de la liste des notes
+    for note in notes:
 
-        for key in dico.keys():
-            if key == str(score):
-                dico[key] += 1
+        # Parcours du dictionnaire contenant toutes les notes
+        for key in dico_notes.keys():
+            if key == str(note):
+                dico_notes[key] += 1
+
+
+def ajout_statut(statuts, dico_statuts):
+    """Ajout du theme si celui-ci n'existe pas dans le dictionnaire sinon augmente de 1 la fréquence
+
+    Args:
+        statuts (list): Liste des thèmes à ajouter dans le dictionnaire
+        dico_statuts (dict): Dictionnaire contenant les thèmes et leurs fréquence
+    """
+
+    # Parcours de la liste des statuts
+    for statut in statuts:
+
+        if statut in dico_statuts:
+            dico_statuts[statut] += 1
+        else:
+            dico_statuts[statut] = 1
+
+
+def ajout_annee_sortie(liste_id, dico_annees):
+    """Ajout de l'année de sortie si celle-ci n'existe pas dans le dictionnaire sinon augmente de 1 la fréquence
+
+    Args:
+        annees (list): Liste des années à ajouter dans le dictionnaire
+        dico_annees (dict): Dictionnaire contenant les années et leurs fréquence
+    """
+    # Parcours de la liste des identifiants
+    for identifiant in pbar(liste_id):
+        annee = recupere_annee_sortie_api(identifiant)
+
+        # Ajustement de la fréquence de l'année dans le  dictionnaire
+        if annee in dico_annees:
+            dico_annees[annee] += 1
+        else:
+            dico_annees[annee] = 1

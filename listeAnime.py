@@ -1,13 +1,19 @@
 import enum
 from turtle import st
-from dico import ajout_note
+from dico import ajout_annee_sortie, ajout_note, ajout_statut
 from extractList import (
     choix_recuperation_donnees_fichier,
     choix_recuperation_donnees_api,
     sauvegarde_liste,
 )
 from scrapTheme import recupere_from_list
-from tagGraph import diagramme_circulaire_notes, histogramme_notes, nuage_de_mot_dico
+from tagGraph import (
+    diagramme_circulaire_notes,
+    graphique_annees_sortie,
+    histogramme_notes,
+    nuage_de_mot_dico,
+    histogramme_statuts,
+)
 import numpy as np
 
 
@@ -70,6 +76,12 @@ class listeAnime:
             "9": 0,
             "10": 0,
         }
+        # Dictionnaire des statuts
+        self.statuts = {}
+
+        # Dictionnaire des annees de sorties
+        self.annees_sortie = {}
+
         if recupere_donnees_fichier is not None and recupere_donnees_fichier is True:
             # Récupération des listes
             choix_recuperation_donnees_fichier(self)
@@ -105,6 +117,14 @@ class listeAnime:
         """Cette fonction initialise les notes de la liste"""
         ajout_note(self.score, self.notes)
 
+    def set_statuts(self):
+        """Cette fonction initialise les statuts de la liste"""
+        ajout_statut(self.etat, self.statuts)
+
+    def set_annees_sortie(self):
+        "Cette fonction initialise les années de sortie de la liste"
+        ajout_annee_sortie(self.id, self.annees_sortie)
+
     def nuage_de_mot(self):
         """Affichage du nuage de mots"""
         nuage_de_mot_dico(self.themes)
@@ -116,6 +136,14 @@ class listeAnime:
     def diagramme_circulaire_notes(self):
         """Affichage du diagramme circulaire des notes"""
         diagramme_circulaire_notes(self.notes)
+
+    def histogramme_statuts(self):
+        """Affichage de l'histogramme des statuts"""
+        histogramme_statuts(self.statuts)
+
+    def graphique_annees_sortie(self):
+        """Affichage du graphique des années de sortie des animes"""
+        graphique_annees_sortie(self.annees_sortie)
 
     def sauvegarde(self):
         sauvegarde_liste(
@@ -181,6 +209,7 @@ class listeAnime:
         )
         return nouvelle_liste_anime
 
+    # Diviser le menu en sous-menus plus lisibles
     def menu_liste_anime(self, nom_affiche_liste=None):
         """Menu permettant d'effectuer différentes actions sur une liste
 
@@ -190,6 +219,12 @@ class listeAnime:
         """
         # Initialisation du choix de l'utilisateur
         choix_utilisateur = ""
+
+        # Récupération des notes dans le dictionnaire
+        self.set_notes()
+
+        # Récupération des notes dans le dictionnaire
+        self.set_statuts()
 
         while choix_utilisateur != "Y" and choix_utilisateur != "N":
             # Récupération du choix de l'utilisateur
@@ -232,8 +267,6 @@ class listeAnime:
                 )
             # Cas où l'utilisateur choisit de sauvegarder
             if choix_utilisateur == "Y":
-                # Récupération des notes dans le dictionnaire
-                self.set_notes()
 
                 # Affichage de l'histogramme des notes
                 self.histogramme_notes()
@@ -254,8 +287,49 @@ class listeAnime:
                 )
             # Cas où l'utilisateur choisit de sauvegarder
             if choix_utilisateur == "Y":
-                # Récupération des notes dans le dictionnaire
-                self.set_notes()
 
                 # Affichage de l'histogramme des notes
                 self.diagramme_circulaire_notes()
+
+        # Reset du choix de l'utilisateur
+        choix_utilisateur = ""
+        while choix_utilisateur != "Y" and choix_utilisateur != "N":
+            # Récupération du choix de l'utilisateur
+            if nom_affiche_liste is not None:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser la répartition des statuts de la liste des "
+                    + nom_affiche_liste
+                    + " ? (Y/N)\n"
+                )
+            else:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser la répartition des statuts de la liste complète ? (Y/N)\n"
+                )
+            # Cas où l'utilisateur choisit de sauvegarder
+            if choix_utilisateur == "Y":
+
+                # Affichage de l'histogramme des notes
+                self.histogramme_statuts()
+
+        # Choix pour la répartition des années de sortie
+        """
+        # Reset du choix de l'utilisateur
+        choix_utilisateur = ""
+        while choix_utilisateur != "Y" and choix_utilisateur != "N":
+            # Récupération du choix de l'utilisateur
+            if nom_affiche_liste is not None:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser la répartition des années de sortie de la liste des "
+                    + nom_affiche_liste
+                    + " ? (Y/N)\n"
+                )
+            else:
+                choix_utilisateur = input(
+                    "Voulez-vous visualiser la répartition des années de sortie de la liste complète ? (Y/N)\n"
+                )
+            # Cas où l'utilisateur choisit de sauvegarder
+            if choix_utilisateur == "Y":
+
+                # Affichage de l'histogramme des notes
+                self.histogramme_statuts()
+        """
