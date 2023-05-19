@@ -1,4 +1,27 @@
 {
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "cSpell.language": "en,fr",
+    "cSpell.words": [
+        "annee",
+        "annees",
+        "Dictonnaire",
+        "donnees",
+        "element",
+        "etat",
+        "frequence",
+        "Frequence",
+        "itemprop",
+        "optional",
+        "personnalisee",
+        "progressbar",
+        "recuperation",
+        "recupere",
+        "themes",
+        "wordcloud"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
 }

@@ -1,10 +1,10 @@
+import utils.dictionnaireUtil as dictionnaire
+
 import requests
 from bs4 import BeautifulSoup
 from progressbar import ProgressBar
 
 pbar = ProgressBar()
-
-from dico import ajout_theme
 
 
 def recupere_themes(dico, id):
@@ -27,10 +27,10 @@ def recupere_themes(dico, id):
     # Récupération de tous les genres de l'anime
     genre = soup.find_all(itemprop="genre")
     for theme in genre:
-        ajout_theme(dico, theme.text.strip())
+        dictionnaire.ajout_theme(dico, theme.text.strip())
 
 
-def recupere_from_list(dico, liste_identifiants):
+def recupere_themes_from_list(dico, liste_identifiants):
     """Récupération des thèmes d'une liste d'animes
 
     Args:

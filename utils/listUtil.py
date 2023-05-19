@@ -1,9 +1,8 @@
+from utils import csvUtil, xmlUtil
+
 import json
 import pandas as pd
-import xml.etree.ElementTree as et
-import csv
 import requests
-from config import api_key
 
 
 def choix_recuperation_donnees_fichier(liste_anime):
@@ -28,163 +27,13 @@ def choix_recuperation_donnees_fichier(liste_anime):
     if choix_utilisateur == "1":
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".xml"
-        recupere_donnees_xml(fichier, liste_anime)
+        xmlUtil.recupere_donnees_xml(fichier, liste_anime)
 
     # Cas où l'utilisateur veut récupérer depuis un fichier csv
     if choix_utilisateur == "2":
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".csv"
-        recupere_donnees_csv(fichier, liste_anime)
-
-
-def recupere_donnees_xml(fichier_xml, liste_anime):
-    """Cette fonction récupère les éléments spécifiés en argument dans le fichier XML
-
-    Args:
-        fichier_xml(String): Nom du fichier XML
-        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
-    """
-    # Récupération du nom du fichier
-    tree = et.parse(fichier_xml)
-
-    # Récupération de la racine
-    root = tree.getroot()
-
-    # Récupération de tous les noms dans une liste
-    for titre in root.iter("series_title"):
-        # print(identifiant.text)
-        liste_anime.nom.append(titre.text)
-
-    # Récupération de tous les identifiants dans une liste
-    for identifiant in root.iter("series_animedb_id"):
-        # print(identifiant.text)
-        liste_anime.id.append(identifiant.text)
-
-    # Récupération de toutess les notes dans une liste
-    for note in root.iter("my_score"):
-        liste_anime.score.append(note.text)
-
-    # Récupération de tous les statuts de visionnage dans une liste
-    for statut in root.iter("my_status"):
-        liste_anime.etat.append(statut.text)
-
-
-def recupere_donnees_csv(fichier_csv, liste_anime):
-    """Cette fonction récupère les éléments spécifiés en argument dans le fichier XML
-
-    Args:
-        fichier_csv(String): Nom du fichier csv
-        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
-    """
-    # Ouverture du fichier en lecture
-    with open(fichier_csv) as fichier:
-        csv_reader = csv.reader(fichier, delimiter=",")
-        # Initialisation de la ligne
-        ligne = 0
-        # Initiliasition de la lecture des colonnes
-        for colonne in csv_reader:
-            # Lecture de l'en-tête
-            if ligne == 0:
-                print(f"Les colonnes sont les suivantes{', '.join(colonne)}")
-                # Passage à la ligne suivante
-                ligne += 1
-            # Lecture des lignes du document
-            else:
-                # Récupération des différentes données
-                liste_anime.nom.append(colonne[1])
-                liste_anime.id.append(colonne[2])
-                liste_anime.score.append(colonne[3])
-                liste_anime.etat.append(colonne[4])
-                # Passage à la ligne suivante
-                ligne += 1
-
-
-def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
-    """Fonction permettant à l'utilisateur de sélectionner les animes qu'il souhaite récupérer selon leur statut
-
-    Args:
-        liste_anime (listeAnime): Liste allant contenir tous les animes et leurs attributs
-        lien_api (String, optional): Lien de l'API. Defaults to None.
-        params (dict, optional): Paramètres de sélection. Defaults to None.
-    """
-    # Clé d'API
-    headers = {
-        "X-MAL-CLIENT-ID": api_key,
-    }
-
-    # Paramètres de sélection
-    if params is not None and params is True:
-        params = {"offset": "0", "fields": "list_status"}
-
-    # Lien de l'API
-    if lien_api is None:
-        # Récupération du nom de l'utilisateur à rechercher
-        user_name = input("Entrez le nom de l'utilisateur :")
-        # Création du lien de l'api
-        lien_api = f"https://api.myanimelist.net/v2/users/{user_name}/animelist"
-
-    # Création de la requête vers l'API
-    reponse = requests.get(
-        # Adresse de la demande
-        lien_api,
-        # Ajout des headers
-        headers=headers,
-        # Ajout des paramètres
-        params=params,
-    )
-
-    # Convertit la réponse en fichier json
-    reponse_json = reponse.json()
-
-    # Ajout des animes à la liste d'anime
-    recupere_donnees_api(reponse_json, liste_anime)
-
-    # Parcours des pages suivantes
-    pagination = reponse_json["paging"]
-    # Récupération du lien vers la liste suivante
-    if "next" in pagination:
-        # Recupération du lien nettoyé
-        lien_page_suivante = pagination["next"]
-
-        # Appel récursif de la fonction
-        choix_recuperation_donnees_api(liste_anime, lien_api=lien_page_suivante)
-
-
-def recupere_donnees_api(reponse_json, liste_anime):
-    """Cette fonction récupère les éléments spécifiés pour chaque anime via l'API
-
-    Args:
-        reponse_json (String): Données au format JSON
-        liste_anime (listeAnime): Liste allant contenir tous les animes et leurs attributs
-    """
-    reponse_json_dump = json.dumps(reponse_json)
-
-    dict_data = json.loads(reponse_json_dump)
-
-    for element in dict_data["data"]:
-
-        # Ajout du titre à la liste d'anime
-        liste_anime.nom.append(element["node"]["title"])
-
-        # Ajout de l'identifiant à la liste d'anime
-        liste_anime.id.append(element["node"]["id"])
-
-        # Ajout du score à la liste d'anime
-        liste_anime.score.append(element["list_status"]["score"])
-
-        # Ajout de l'état de visionnage à la liste d'anime
-        statut = element["list_status"]["status"]
-        if statut == "watching":
-            statut = "Watching"
-        if statut == "completed":
-            statut = "Completed"
-        if statut == "on_hold":
-            statut = "On-Hold"
-        if statut == "dropped":
-            statut = "Dropped"
-        if statut == "plan_to_watch":
-            statut = "Plan to Watch"
-        liste_anime.etat.append(statut)
+        csvUtil.recupere_donnees_csv(fichier, liste_anime)
 
 
 def sauvegarde_liste(nom, id, score, etat):
@@ -256,29 +105,8 @@ def create_dataframe_statut(statuts, statuts_frequence):
     return statut_dataframe
 
 
-def recupere_annee_sortie_api(id_anime):
-    # Clé d'API
-    headers = {
-        "X-MAL-CLIENT-ID": api_key,
-    }
-    reponse = requests.get(
-        f"https://api.myanimelist.net/v2/anime/{id_anime}?fields=start_season,status",
-        headers=headers,
-    )
-    # Conversion de la réponse au format json
-    reponse_json = reponse.json()
-    # Dump de la réponse
-    reponse_json_dump = json.dumps(reponse_json)
-    # Enregistrement du dump dans un dictionnaire
-    dict_data = json.loads(reponse_json_dump)
-    # Renvoi de l'année de sortie
-    if dict_data["status"] != "not_yet_aired":
-        # print(dict_data["start_season"]["year"])
-        return dict_data["start_season"]["year"]
-
-
 def create_dataframe_annees_sorties(annees, annees_frequence):
-    """Cette fonction génèe un dataframe à partir des annnées de sortie de chaque anime
+    """Cette fonction génère un dataframe à partir des années de sortie de chaque anime
 
     Args:
         annees (List): Liste des années de sortie des animes
@@ -392,7 +220,7 @@ def affiche_liste_api(lien, headers, params=None):
     pagination = reponse_json["paging"]
     # Récupération du lien vers la liste suivante
     if "next" in pagination:
-        # Recupération du lien nettoyé
+        # Récupération du lien nettoyé
         lien_page_suivante = pagination["next"]
         print(f"Lien nettoyé : {lien_page_suivante}")
         # Appel récursif de la fonction

@@ -1,19 +1,6 @@
-import enum
-from turtle import st
-from dico import ajout_annee_sortie, ajout_note, ajout_statut
-from extractList import (
-    choix_recuperation_donnees_fichier,
-    choix_recuperation_donnees_api,
-    sauvegarde_liste,
-)
-from scrapTheme import recupere_from_list
-from tagGraph import (
-    diagramme_circulaire_notes,
-    graphique_annees_sortie,
-    histogramme_notes,
-    nuage_de_mot_dico,
-    histogramme_statuts,
-)
+import utils.dictionnaireUtil as dictionnaire
+from utils import listUtil, apiUtil, themeUtil, graphUtil
+
 import numpy as np
 
 
@@ -84,10 +71,10 @@ class listeAnime:
 
         if recupere_donnees_fichier is not None and recupere_donnees_fichier is True:
             # Récupération des listes
-            choix_recuperation_donnees_fichier(self)
+            listUtil.choix_recuperation_donnees_fichier(self)
         if recupere_donnees_api is not None and recupere_donnees_api is True:
             # Récupération des listes
-            choix_recuperation_donnees_api(self, params=True)
+            listUtil.choix_recuperation_donnees_api(self, params=True)
         if recupere_donnees_fichier is None and recupere_donnees_api is None:
             # Récupération du choix de l'utilisateur
             choix_utilisateur = ""
@@ -99,14 +86,14 @@ class listeAnime:
                 choix_utilisateur = input()
 
             if choix_utilisateur == "1":
-                choix_recuperation_donnees_fichier(self)
+                listUtil.choix_recuperation_donnees_fichier(self)
             else:
-                choix_recuperation_donnees_api(self, params=True)
+                apiUtil.choix_recuperation_donnees_api(self, params=True)
 
     def set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""
         # Initialisation des themes
-        recupere_from_list(self.themes, self.id)
+        themeUtil.recupere_themes_from_list(self.themes, self.id)
 
     def print_themes(self):
         """Affiche la liste des thèmes des animes contenus dans la liste"""
@@ -115,38 +102,38 @@ class listeAnime:
 
     def set_notes(self):
         """Cette fonction initialise les notes de la liste"""
-        ajout_note(self.score, self.notes)
+        dictionnaire.ajout_note(self.score, self.notes)
 
     def set_statuts(self):
         """Cette fonction initialise les statuts de la liste"""
-        ajout_statut(self.etat, self.statuts)
+        dictionnaire.ajout_statut(self.etat, self.statuts)
 
     def set_annees_sortie(self):
         "Cette fonction initialise les années de sortie de la liste"
-        ajout_annee_sortie(self.id, self.annees_sortie)
+        dictionnaire.ajout_annee_sortie(self.id, self.annees_sortie)
 
     def nuage_de_mot(self):
         """Affichage du nuage de mots"""
-        nuage_de_mot_dico(self.themes)
+        graphUtil.nuage_de_mot_dico(self.themes)
 
     def histogramme_notes(self):
         """Affichage de l'histogramme des notes"""
-        histogramme_notes(self.notes)
+        graphUtil.histogramme_notes(self.notes)
 
     def diagramme_circulaire_notes(self):
         """Affichage du diagramme circulaire des notes"""
-        diagramme_circulaire_notes(self.notes)
+        graphUtil.diagramme_circulaire_notes(self.notes)
 
     def histogramme_statuts(self):
         """Affichage de l'histogramme des statuts"""
-        histogramme_statuts(self.statuts)
+        graphUtil.histogramme_statuts(self.statuts)
 
     def graphique_annees_sortie(self):
         """Affichage du graphique des années de sortie des animes"""
-        graphique_annees_sortie(self.annees_sortie)
+        graphUtil.graphique_annees_sortie(self.annees_sortie)
 
     def sauvegarde(self):
-        sauvegarde_liste(
+        listUtil.sauvegarde_liste(
             self.nom,
             self.id,
             self.score,
@@ -267,7 +254,6 @@ class listeAnime:
                 )
             # Cas où l'utilisateur choisit de sauvegarder
             if choix_utilisateur == "Y":
-
                 # Affichage de l'histogramme des notes
                 self.histogramme_notes()
 
@@ -287,7 +273,6 @@ class listeAnime:
                 )
             # Cas où l'utilisateur choisit de sauvegarder
             if choix_utilisateur == "Y":
-
                 # Affichage de l'histogramme des notes
                 self.diagramme_circulaire_notes()
 
@@ -307,7 +292,6 @@ class listeAnime:
                 )
             # Cas où l'utilisateur choisit de sauvegarder
             if choix_utilisateur == "Y":
-
                 # Affichage de l'histogramme des notes
                 self.histogramme_statuts()
 
