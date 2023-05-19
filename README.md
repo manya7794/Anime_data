@@ -2,7 +2,19 @@
 
 Le but de cet outil est de permettre aux utilisateurs du site MyAnimeList de pouvoir extraire leur liste de séries d'animation personnalisée depuis un fichier stocké sur leur PC ou directement depuis le site via leur nom d'utilisateur. Une fois la liste extraite, les utilisateurs peuvent choisir de visualiser différentes données représentant leur consommation d'animation dans des graphiques dédiés ou bien les télécharger sous forme de fichier csv.
 
-## I. Menu
+## I.Installation
+Download the project to your directory via a terminal by entering the following command:
+```
+git clone https://github.com/manya7794/Anime_data.git
+```
+Make sure you have Python 3.9 or higher installed on your computer and then run the following commands in a terminal opened in the folder containing the project:
+```
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r .\requirements.txt
+```
+
+## II. Menu
 ### A. Importation des listes
 Au début du programme, l'utilisateur se voit offrir le choix pour la récupération de ses données.
 ![image](https://user-images.githubusercontent.com/72400479/167317467-1063473f-99b8-43ee-a4b8-0eda5c98732f.png)
@@ -35,7 +47,7 @@ Si l'utilisateur choisit d'extraire une sous-liste, un nouveau choix s'offre à 
 ![image](https://user-images.githubusercontent.com/72400479/167318124-74fcaa41-e4a6-44be-b987-2a1b5bbc8cab.png)
 
 
-## II. Graphiques
+## III. Graphiques
 
 ### A. Nuages de mots
 Une fois la liste importée, le programme propose de visualiser le nuage de mots.

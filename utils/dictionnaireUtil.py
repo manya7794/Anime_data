@@ -1,46 +1,45 @@
-from operator import truediv
-from extractList import recupere_annee_sortie_api
+from utils.apiUtil import recupere_annee_sortie_api_mal
 from progressbar import ProgressBar
 
 pbar = ProgressBar()
 
 
-def iteration_frequence_theme(dico, theme_cherche):
-    """Augmente la fréquence d'apparition du thême cherché passé en argument
+def iteration_frequence_theme(dict, theme_cherche):
+    """Augmente la fréquence d'apparition du thème cherché passé en argument
 
     Args:
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
         theme_cherche (String): Clé du theme recherché
     """
-    for key in dico.keys():
+    for key in dict.keys():
         if key == theme_cherche:
-            dico[key] += 1
+            dict[key] += 1
 
 
-def ajout_theme(dico, theme_cherche):
+def ajout_theme(dict, theme_cherche):
     """Ajout du theme si celui n'existe pas dans le dictionnaire
 
     Args:
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
-        theme_cherche (String): Thême à ajouter dans le dictionnaire
+        theme_cherche (String): Thème à ajouter dans le dictionnaire
     """
     # Booléen vérifiant l'existence de theme_cherche
     existe = False
 
-    for theme in dico:
+    for theme in dict:
         if theme == theme_cherche:
             # Cas où le thème est présent dans le dictionnaire
             existe = True
             # Augmentation de la fréquence d'apparition du theme
-            iteration_frequence_theme(dico, theme_cherche)
+            iteration_frequence_theme(dict, theme_cherche)
             break
     # Cas où le thème n'est pas présent dans le dictionnaire
     if existe is False:
         # Création du theme
-        dico[theme_cherche] = 1
+        dict[theme_cherche] = 1
 
 
-def ajout_note(notes, dico_notes):
+def ajout_note(notes, dict_notes):
     """Ajout de la note si celle-ci n'existe pas dans le dictionnaire
 
     Args:
@@ -49,14 +48,13 @@ def ajout_note(notes, dico_notes):
     """
     # Parcours de la liste des notes
     for note in notes:
-
         # Parcours du dictionnaire contenant toutes les notes
-        for key in dico_notes.keys():
+        for key in dict_notes.keys():
             if key == str(note):
-                dico_notes[key] += 1
+                dict_notes[key] += 1
 
 
-def ajout_statut(statuts, dico_statuts):
+def ajout_statut(statuts, dict_statuts):
     """Ajout du theme si celui-ci n'existe pas dans le dictionnaire sinon augmente de 1 la fréquence
 
     Args:
@@ -66,14 +64,13 @@ def ajout_statut(statuts, dico_statuts):
 
     # Parcours de la liste des statuts
     for statut in statuts:
-
-        if statut in dico_statuts:
-            dico_statuts[statut] += 1
+        if statut in dict_statuts:
+            dict_statuts[statut] += 1
         else:
-            dico_statuts[statut] = 1
+            dict_statuts[statut] = 1
 
 
-def ajout_annee_sortie(liste_id, dico_annees):
+def ajout_annee_sortie(liste_id, dict_annees):
     """Ajout de l'année de sortie si celle-ci n'existe pas dans le dictionnaire sinon augmente de 1 la fréquence
 
     Args:
@@ -82,10 +79,10 @@ def ajout_annee_sortie(liste_id, dico_annees):
     """
     # Parcours de la liste des identifiants
     for identifiant in pbar(liste_id):
-        annee = recupere_annee_sortie_api(identifiant)
+        annee = recupere_annee_sortie_api_mal(identifiant)
 
         # Ajustement de la fréquence de l'année dans le  dictionnaire
-        if annee in dico_annees:
-            dico_annees[annee] += 1
+        if annee in dict_annees:
+            dict_annees[annee] += 1
         else:
-            dico_annees[annee] = 1
+            dict_annees[annee] = 1
