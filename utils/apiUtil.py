@@ -1,7 +1,7 @@
-from config import api_key
-
 import json
+
 import requests
+from config import api_key
 
 
 def choix_recuperation_donnees_api(liste_anime, lien_api=None, params=None):
@@ -92,6 +92,14 @@ def recupere_donnees_api(reponse_json, liste_anime):
 
 
 def recupere_annee_sortie_api_mal(id_anime):
+    """Fonction récupérant la date de sortie des animes de la liste depuis l'API
+
+    Args:
+        id_anime (List): Liste contenant les identifiants de tous les animes
+
+    Returns:
+        List: Liste contenant la date de sortie de tous les animes
+    """
     # Clé d'API
     headers = {
         "X-MAL-CLIENT-ID": api_key,

@@ -1,6 +1,6 @@
 from config import api_key, user_name
 from utils import listUtil
-from listeAnime import listeAnime
+from listeAnime import ListeAnime
 
 
 # Clé d'API
@@ -12,7 +12,7 @@ params = {"offset": "0", "fields": "list_status"}
 # Lien de l'API
 lien_api = f"https://api.myanimelist.net/v2/users/{user_name}/animelist"
 
-liste_complete = listeAnime()
+liste_complete = ListeAnime()
 
 liste_complete.menu_liste_anime()
 

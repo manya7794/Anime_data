@@ -1,14 +1,16 @@
+import numpy as np
+
 import utils.dictionnaireUtil as dictionnaire
 from utils import listUtil, apiUtil, themeUtil, graphUtil
 
-import numpy as np
 
+class ListeAnime:
+    """Classe décrivant la liste d'anime d'un utilisateur"""
 
-class listeAnime:
     def __init__(
         self,
         nom=None,
-        id=None,
+        anime_id=None,
         score=None,
         etat=None,
         themes=None,
@@ -32,10 +34,10 @@ class listeAnime:
             self.nom = nom
         else:
             self.nom = []
-        if id is not None:
-            self.id = id
+        if anime_id is not None:
+            self.anime_id = anime_id
         else:
-            self.id = []
+            self.anime_id = []
         if score is not None:
             self.score = score
         else:
@@ -74,7 +76,7 @@ class listeAnime:
             listUtil.choix_recuperation_donnees_fichier(self)
         if recupere_donnees_api is not None and recupere_donnees_api is True:
             # Récupération des listes
-            listUtil.choix_recuperation_donnees_api(self, params=True)
+            apiUtil.choix_recuperation_donnees_api(self, params=True)
         if recupere_donnees_fichier is None and recupere_donnees_api is None:
             # Récupération du choix de l'utilisateur
             choix_utilisateur = ""
@@ -93,7 +95,7 @@ class listeAnime:
     def set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""
         # Initialisation des themes
-        themeUtil.recupere_themes_from_list(self.themes, self.id)
+        themeUtil.recupere_themes_from_list(self.themes, self.anime_id)
 
     def print_themes(self):
         """Affiche la liste des thèmes des animes contenus dans la liste"""
@@ -110,11 +112,11 @@ class listeAnime:
 
     def set_annees_sortie(self):
         "Cette fonction initialise les années de sortie de la liste"
-        dictionnaire.ajout_annee_sortie(self.id, self.annees_sortie)
+        dictionnaire.ajout_annee_sortie(self.anime_id, self.annees_sortie)
 
     def nuage_de_mot(self):
         """Affichage du nuage de mots"""
-        graphUtil.nuage_de_mot_dico(self.themes)
+        graphUtil.nuage_de_mot_dict(self.themes)
 
     def histogramme_notes(self):
         """Affichage de l'histogramme des notes"""
@@ -133,9 +135,10 @@ class listeAnime:
         graphUtil.graphique_annees_sortie(self.annees_sortie)
 
     def sauvegarde(self):
+        """Fonction permettant de sauvegarder la liste dans un fichier"""
         listUtil.sauvegarde_liste(
             self.nom,
-            self.id,
+            self.anime_id,
             self.score,
             self.etat,
         )
@@ -171,7 +174,7 @@ class listeAnime:
                 nom_nouvelle_liste.append(element)
 
         # Ajout de l'id de l'anime
-        for index, element in enumerate(self.id, start=0):
+        for index, element in enumerate(self.anime_id, start=0):
             if index in index_liste:
                 id_nouvelle_liste.append(element)
 
@@ -186,9 +189,9 @@ class listeAnime:
                 etat_nouvelle_liste.append(element)
 
         # Création de la nouvelle liste
-        nouvelle_liste_anime = listeAnime(
+        nouvelle_liste_anime = ListeAnime(
             nom=nom_nouvelle_liste,
-            id=id_nouvelle_liste,
+            anime_id=id_nouvelle_liste,
             score=score_nouvelle_liste,
             etat=etat_nouvelle_liste,
             recupere_donnees_fichier=False,

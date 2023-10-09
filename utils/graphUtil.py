@@ -89,7 +89,7 @@ def diagramme_circulaire_notes(dico_notes):
     """Affichage du diagramme circulaire des notes
 
     Args:
-        dico_notes (Dict): Dictionnaire contenant les notes et leur féquence
+        dico_notes (Dict): Dictionnaire contenant les notes et leur fréquence
     """
     # Création du dataframe
     notes = create_dataframe_notes(dico_notes.keys(), dico_notes.values())

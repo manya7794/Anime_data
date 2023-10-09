@@ -56,7 +56,7 @@ Une fois la liste importée, le programme propose de visualiser le nuage de mots
 ![image](https://user-images.githubusercontent.com/72400479/167318012-085a4273-7680-4990-bc5f-0c0dda0c4de8.png)
 
 
-### B. Histogrames
+### B. Histogrammes
 Différents types d'histogrammes sont possibles pour permettre à l'utilisateur de comparer les données qu'il souhaite. 
 #### 1. Notes 
 ![image](https://user-images.githubusercontent.com/72400479/167317661-6277e586-92dc-4a4b-b4f2-a1f0a7d79003.png)

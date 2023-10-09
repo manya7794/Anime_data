@@ -1,22 +1,22 @@
-from utils.apiUtil import recupere_annee_sortie_api_mal
 from progressbar import ProgressBar
+from utils.apiUtil import recupere_annee_sortie_api_mal
 
 pbar = ProgressBar()
 
 
-def iteration_frequence_theme(dict, theme_cherche):
+def iteration_frequence_theme(dictionary, theme_cherche):
     """Augmente la fréquence d'apparition du thème cherché passé en argument
 
     Args:
         dico (dict): Dictionnaire contenant les thèmes et leur fréquence
         theme_cherche (String): Clé du theme recherché
     """
-    for key in dict.keys():
+    for key in dictionary.keys():
         if key == theme_cherche:
-            dict[key] += 1
+            dictionary[key] += 1
 
 
-def ajout_theme(dict, theme_cherche):
+def ajout_theme(dictionary, theme_cherche):
     """Ajout du theme si celui n'existe pas dans le dictionnaire
 
     Args:
@@ -26,17 +26,17 @@ def ajout_theme(dict, theme_cherche):
     # Booléen vérifiant l'existence de theme_cherche
     existe = False
 
-    for theme in dict:
+    for theme in dictionary:
         if theme == theme_cherche:
             # Cas où le thème est présent dans le dictionnaire
             existe = True
             # Augmentation de la fréquence d'apparition du theme
-            iteration_frequence_theme(dict, theme_cherche)
+            iteration_frequence_theme(dictionary, theme_cherche)
             break
     # Cas où le thème n'est pas présent dans le dictionnaire
     if existe is False:
         # Création du theme
-        dict[theme_cherche] = 1
+        dictionary[theme_cherche] = 1
 
 
 def ajout_note(notes, dict_notes):

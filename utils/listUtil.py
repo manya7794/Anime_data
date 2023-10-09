@@ -1,8 +1,8 @@
-from utils import csvUtil, xmlUtil
-
 import json
 import pandas as pd
 import requests
+
+from utils import csvUtil, xmlUtil
 
 
 def choix_recuperation_donnees_fichier(liste_anime):
@@ -36,12 +36,12 @@ def choix_recuperation_donnees_fichier(liste_anime):
         csvUtil.recupere_donnees_csv(fichier, liste_anime)
 
 
-def sauvegarde_liste(nom, id, score, etat):
+def sauvegarde_liste(nom, anime_id, score, etat):
     """Cette fonction permet d'initialiser la demande de sauvegarde de la liste
 
     Args:
         nom (list): Liste des noms des animes
-        id (list): Liste des id des animes
+        anime_id (list): Liste des id des animes
         score (list): Liste des scores des animes
         etat (list): Liste des états de visionnages des animes
     """
@@ -52,16 +52,16 @@ def sauvegarde_liste(nom, id, score, etat):
         choix_sauvegarde = input("Voulez-vous sauvegarder au format CSV ? (Y/N) \n")
         # Cas où l'utilisateur choisit de sauvegarder
         if choix_sauvegarde == "Y":
-            anime_dataframe = create_dataframe_liste(nom, id, score, etat)
+            anime_dataframe = create_dataframe_liste(nom, anime_id, score, etat)
             sauvegarde_csv(anime_dataframe)
 
 
-def create_dataframe_liste(nom, id, score, etat):
+def create_dataframe_liste(nom, anime_id, score, etat):
     """Cette fonction génère un dataframe à partir des listes passées en argument
 
     Args:
         nom (list): Liste des noms des animes
-        id (list): Liste des id des animes
+        anime_id (list): Liste des id des animes
         score (list): Liste des scores des animes
         etat (list): Liste des états de visionnages des animes
 
@@ -70,7 +70,7 @@ def create_dataframe_liste(nom, id, score, etat):
     """
     # Création d'une dataframe
     anime_dataframe = pd.DataFrame(
-        list(zip(nom, id, score, etat)),
+        list(zip(nom, anime_id, score, etat)),
         columns=["Nom", "Identifiant", "Note", "Statut"],
     )
     # Sauvegarde de la dataframe au format CSV
