@@ -1,27 +1,13 @@
 import utils.dictionnaireUtil as dictionnaire
-from utils import listUtil, apiUtil, themeUtil, graphUtil
+from utils import listUtil, themeUtil, graphUtil
 
 
 class listeAnime:
-    def __init__(
-        self,
-        user_name=None,
-        themes=None,
-        recupere_donnees_fichier=None,
-        recupere_donnees_api=None,
-    ):
+    def __init__(self, themes=None):
         """Constructeur de la classe listeAnime
 
         Args:
-            nom (List, optional): Liste des noms d'animes. Defaults to None.
-            id (List, optional): Liste des identifiants d'animes. Defaults to None.
-            score (List, optional): Liste des scores d'animes. Defaults to None.
-            etat (List, optional): Liste des états de visionnage des animes. Defaults to None.
-            themes (Dict, optional): Dictionnaire des thèmes des animes. Defaults to None.
-            recupere_donnees_fichier (boolean, optional): Choisit ou non de récupérer les données depuis un fichier.
-            Defaults to None.
-            recupere_donnees_api (boolean, optional): Choisit ou non de récupérer les données depuis l'API.
-            Defaults to None.
+            themes (dict, optional): Dictionnaire des thèmes des animes. Defaults to None.
         """
         self.animes = []
 
@@ -50,95 +36,81 @@ class listeAnime:
         # Dictionnaire des annees de sorties
         self.annees_sortie = {}
 
-        if recupere_donnees_fichier is not None and recupere_donnees_fichier is True:
-            # Récupération des listes
-            listUtil.choix_recuperation_donnees_fichier(self)
-        if recupere_donnees_api is not None and recupere_donnees_api is True:
-            # Récupération des listes
-            listUtil.choix_recuperation_donnees_api(self, params=True)
-        if recupere_donnees_fichier is None and recupere_donnees_api is None:
-            # Récupération du choix de l'utilisateur
-            choix_utilisateur = ""
-
-            while choix_utilisateur != "1" and choix_utilisateur != "2":
-                print("Comment souhaitez-vous récupérer la liste des animes")
-                print("1. Depuis un fichier (XML ou CSV)")
-                print("2. Depuis l'API")
-                choix_utilisateur = input()
-
-            # Récupération depuis un fichier
-            if choix_utilisateur == "1":
-                listUtil.choix_recuperation_donnees_fichier(self)
-
-            # Récupération depuis l'API
-            if choix_utilisateur == "2":
-                donnees_animes = apiUtil.get_user_anime_list(user_name)
-
-                self.animes.extend(donnees_animes)
-
     def set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""
         # Initialisation des themes
-        ids = []
+        ids = [anime.id for anime in self.animes]
 
-        for anime in self.animes:
-            ids.append(anime.id)
+        self.themes = {}
 
         # Initialisation des themes
         themeUtil.recupere_themes_from_list(self.themes, ids)
 
     def print_themes(self):
         """Affiche la liste des thèmes des animes contenus dans la liste"""
-        for key, values in self.themes:
+        for key, values in self.themes.items():
             print(key, " : ", values)
 
     def set_notes(self):
         """Cette fonction initialise les notes de la liste"""
         # Récupération des scores des animes
-        scores = []
+        scores = [anime.score for anime in self.animes]
 
-        for anime in self.animes:
-            scores.append(anime.score)
+        self.notes = {
+            "0": 0,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0,
+            "7": 0,
+            "8": 0,
+            "9": 0,
+            "10": 0,
+        }
 
         dictionnaire.ajout_note(scores, self.notes)
 
     def set_statuts(self):
         """Cette fonction initialise les statuts de la liste"""
         # Récupération des statuts des animes
-        statuts = []
+        statuts = [anime.etat for anime in self.animes]
 
-        for anime in self.animes:
-            statuts.append(anime.etat)
+        self.statuts = {}
 
         dictionnaire.ajout_statut(statuts, self.statuts)
 
     def set_annees_sortie(self):
         "Cette fonction initialise les années de sortie de la liste"
-        ids = []
-
-        for anime in self.animes:
-            ids.append(anime.id)
+        ids = [anime.id for anime in self.animes]
 
         dictionnaire.ajout_annee_sortie(ids, self.annees_sortie)
 
-    def nuage_de_mot(self):
-        """Affichage du nuage de mots"""
-        graphUtil.nuage_de_mot_dico(self.themes)
+    def _afficher_nuage_de_mot(self):
+        """Initialise les thèmes et affiche le nuage de mots"""
+        # Initialisation des themes
+        self.set_themes()
+        # Affichage du nuage de mots
+        graphUtil.nuage_de_mot_dict(self.themes)
 
-    def histogramme_notes(self):
+    def _afficher_histogramme_notes(self):
         """Affichage de l'histogramme des notes"""
         graphUtil.histogramme_notes(self.notes)
 
-    def diagramme_circulaire_notes(self):
+    def _afficher_diagramme_circulaire_notes(self):
         """Affichage du diagramme circulaire des notes"""
         graphUtil.diagramme_circulaire_notes(self.notes)
 
-    def histogramme_statuts(self):
+    def _afficher_histogramme_statuts(self):
         """Affichage de l'histogramme des statuts"""
         graphUtil.histogramme_statuts(self.statuts)
 
-    def graphique_annees_sortie(self):
+    def _afficher_graphique_annees_sortie(self):
         """Affichage du graphique des années de sortie des animes"""
+        # Initialisation des années de sortie
+        self.set_annees_sortie()
+        # Affichage du graphique des années de sortie
         graphUtil.graphique_annees_sortie(self.annees_sortie)
 
     def recupere_animes_selon_statut(self, statut_cherche):
@@ -153,25 +125,69 @@ class listeAnime:
         """
 
         # Liste des animes correspondant au statut recherché
-        animes_correspondants = []
-
-        # Parcours de la liste des animes
-        for anime in self.animes:
-            if anime.etat == statut_cherche:
-                animes_correspondants.append(anime)
+        animes_correspondants = [
+            anime for anime in self.animes if anime.etat == statut_cherche
+        ]
 
         # Création de la nouvelle liste
-        nouvelle_liste_anime = listeAnime(
-            recupere_donnees_fichier=False,
-            recupere_donnees_api=False,
-        )
+        nouvelle_liste_anime = listeAnime()
 
         # Ajout des animes correspondants
         nouvelle_liste_anime.animes.extend(animes_correspondants)
 
         return nouvelle_liste_anime
 
-    # Diviser le menu en sous-menus plus lisibles
+    def _confirmer_action(self, action, fonction, nom_affiche_liste=None):
+        """Demande confirmation avant d'exécuter une action
+
+        Args:
+            action (String): Action à proposer à l'utilisateur
+            fonction (function): Fonction à exécuter si l'utilisateur confirme
+            nom_affiche_liste (String, optional): Nom à afficher pour la liste.
+        """
+        message = self._construire_message_menu(action, nom_affiche_liste)
+        choix_utilisateur = self._demander_confirmation(message)
+
+        if choix_utilisateur == "Y":
+            fonction()
+
+    def _construire_message_menu(self, action, nom_affiche_liste=None):
+        """Construit le message affiché lors d'une action du menu
+
+        Args:
+            action (String): Action à proposer à l'utilisateur
+            nom_affiche_liste (String, optional): Nom de la liste affichée.
+
+        Returns:
+            String: Message à afficher
+        """
+        if nom_affiche_liste is not None:
+            return (
+                "Voulez-vous visualiser "
+                + action
+                + " de la liste "
+                + nom_affiche_liste
+                + " ? (Y/N)\n"
+            )
+
+        return "Voulez-vous visualiser " + action + " de la liste complète ? (Y/N)\n"
+
+    def _demander_confirmation(self, message):
+        """Demande une confirmation à l'utilisateur
+
+        Args:
+            message (String): Message affiché à l'utilisateur
+
+        Returns:
+            String: Réponse de l'utilisateur (Y ou N)
+        """
+        choix_utilisateur = ""
+
+        while choix_utilisateur not in ("Y", "N"):
+            choix_utilisateur = input(message).upper()
+
+        return choix_utilisateur
+
     def menu_liste_anime(self, nom_affiche_liste=None):
         """Menu permettant d'effectuer différentes actions sur une liste
 
@@ -179,119 +195,45 @@ class listeAnime:
             nom_affiche_liste (String, optional): Nom à afficher pour la liste lors des choix (Ex: "animes vus",
             "animes en pause", etc...). Defaults to None.
         """
-        # Initialisation du choix de l'utilisateur
-        choix_utilisateur = ""
 
         # Récupération des notes dans le dictionnaire
         self.set_notes()
 
-        # Récupération des notes dans le dictionnaire
+        # Récupération des statuts dans le dictionnaire
         self.set_statuts()
 
-        while choix_utilisateur != "Y" and choix_utilisateur != "N":
-            # Récupération du choix de l'utilisateur
-            if nom_affiche_liste is not None:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser le nuage de mot de la liste des "
-                    + nom_affiche_liste
-                    + " ? (Y/N)\n"
-                )
-            else:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser le nuage de mot de la liste complète ? (Y/N)\n"
-                )
+        # Nuage de mots
+        self._confirmer_action(
+            "le nuage de mots", self._afficher_nuage_de_mot, nom_affiche_liste
+        )
 
-            # Cas où l'utilisateur choisit de sauvegarder
-            if choix_utilisateur == "Y":
-                # Initialisation des themes
-                self.set_themes()
-                # Affichage du nuage de mots
-                self.nuage_de_mot()
+        # Histogramme des notes
+        self._confirmer_action(
+            "l'histogramme des notes",
+            self._afficher_histogramme_notes,
+            nom_affiche_liste,
+        )
 
-        # Reset du choix de l'utilisateur
-        choix_utilisateur = ""
+        # Diagramme circulaire des notes
+        self._confirmer_action(
+            "le diagramme circulaire des notes",
+            self._afficher_diagramme_circulaire_notes,
+            nom_affiche_liste,
+        )
 
-        # Sauvegarde de la liste
-        print("Sauvegarde de la liste complète")
-        self.sauvegarde()
+        # Répartition des statuts
+        self._confirmer_action(
+            "la répartition des statuts",
+            self._afficher_histogramme_statuts,
+            nom_affiche_liste,
+        )
 
-        while choix_utilisateur != "Y" and choix_utilisateur != "N":
-            # Récupération du choix de l'utilisateur
-            if nom_affiche_liste is not None:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser l'histogramme des notes de la liste des "
-                    + nom_affiche_liste
-                    + " ? (Y/N)\n"
-                )
-            else:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser l'histogramme des notes de la liste complète ? (Y/N)\n"
-                )
-            # Cas où l'utilisateur choisit de sauvegarder
-            if choix_utilisateur == "Y":
-                # Affichage de l'histogramme des notes
-                self.histogramme_notes()
-
-        # Reset du choix de l'utilisateur
-        choix_utilisateur = ""
-        while choix_utilisateur != "Y" and choix_utilisateur != "N":
-            # Récupération du choix de l'utilisateur
-            if nom_affiche_liste is not None:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser le diagramme circulaire des notes de la liste des "
-                    + nom_affiche_liste
-                    + " ? (Y/N)\n"
-                )
-            else:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser le diagramme circulaire des notes de la liste complète ? (Y/N)\n"
-                )
-            # Cas où l'utilisateur choisit de sauvegarder
-            if choix_utilisateur == "Y":
-                # Affichage de l'histogramme des notes
-                self.diagramme_circulaire_notes()
-
-        # Reset du choix de l'utilisateur
-        choix_utilisateur = ""
-        while choix_utilisateur != "Y" and choix_utilisateur != "N":
-            # Récupération du choix de l'utilisateur
-            if nom_affiche_liste is not None:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser la répartition des statuts de la liste des "
-                    + nom_affiche_liste
-                    + " ? (Y/N)\n"
-                )
-            else:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser la répartition des statuts de la liste complète ? (Y/N)\n"
-                )
-            # Cas où l'utilisateur choisit de sauvegarder
-            if choix_utilisateur == "Y":
-                # Affichage de l'histogramme des notes
-                self.histogramme_statuts()
-
-        # Choix pour la répartition des années de sortie
-        """
-        # Reset du choix de l'utilisateur
-        choix_utilisateur = ""
-        while choix_utilisateur != "Y" and choix_utilisateur != "N":
-            # Récupération du choix de l'utilisateur
-            if nom_affiche_liste is not None:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser la répartition des années de sortie de la liste des "
-                    + nom_affiche_liste
-                    + " ? (Y/N)\n"
-                )
-            else:
-                choix_utilisateur = input(
-                    "Voulez-vous visualiser la répartition des années de sortie de la liste complète ? (Y/N)\n"
-                )
-            # Cas où l'utilisateur choisit de sauvegarder
-            if choix_utilisateur == "Y":
-
-                # Affichage de l'histogramme des notes
-                self.histogramme_statuts()
-        """
+        # Répartition des années de sortie
+        self._confirmer_action(
+            "la répartition des années de sortie",
+            self._afficher_graphique_annees_sortie,
+            nom_affiche_liste,
+        )
 
     def sauvegarde(self):
         listUtil.sauvegarde_liste(self.animes)

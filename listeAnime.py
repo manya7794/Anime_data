@@ -88,7 +88,7 @@ class listeAnime:
             if choix_utilisateur == "1":
                 listUtil.choix_recuperation_donnees_fichier(self)
             else:
-                apiUtil.choix_recuperation_donnees_api(self, params=True)
+                apiUtil.get_user_anime_list(self, params=True)
 
     def set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""

@@ -1,15 +1,16 @@
-from utils import csvUtil, xmlUtil
-
 import json
 import pandas as pd
 import requests
 
+import csvUtil
+import xmlUtil
 
-def choix_recuperation_donnees_fichier(liste_anime):
+
+def choix_recuperation_donnees_fichier():
     """Fonction permettant à l'utilisateur de sélectionner le fichier depuis lequel les données sont récupérées
 
-    Args:
-        liste_anime(listeAnime):Liste allant contenir tous les animes et leurs attributs
+    Returns:
+        list: Liste des objets Anime
     """
     choix_utilisateur = ""
     fichier = ""
@@ -28,14 +29,14 @@ def choix_recuperation_donnees_fichier(liste_anime):
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".xml"
         animes = xmlUtil.recupere_donnees_xml(fichier)
-        liste_anime.animes.extend(animes)
+        return animes
 
     # Cas où l'utilisateur veut récupérer depuis un fichier csv
     if choix_utilisateur == "2":
         fichier = input("Entrez le nom du fichier : ")
         fichier = fichier + ".csv"
         animes = csvUtil.recupere_donnees_csv(fichier)
-        liste_anime.animes.extend(animes)
+        return animes
 
 
 def sauvegarde_liste(animes):
@@ -145,7 +146,7 @@ def extraire_nouvelle_liste_personnalisee(liste_anime):
         # Récupération du choix de l'utilisateur
         choix_utilisateur = input(
             "Voulez-vous charger des animes dans une autre liste ? (Y/N)\n"
-        )
+        ).upper()
         # Cas où l'utilisateur choisit de créer une nouvelle liste
         if choix_utilisateur == "Y":
             while (

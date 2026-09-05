@@ -3,3 +3,4 @@ Documentation API.txt
 .vscode/
 venv/
 .env
+*.csv
