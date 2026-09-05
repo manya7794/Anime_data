@@ -1,9 +1,9 @@
 import utils.dictionnaireUtil as dictionnaire
-from utils import listUtil, themeUtil, graphUtil
+from utils import themeUtil, graphUtil
 
 
 class listeAnime:
-    def __init__(self, themes=None):
+    def __init__(self):
         """Constructeur de la classe listeAnime
 
         Args:
@@ -11,12 +11,10 @@ class listeAnime:
         """
         self.animes = []
 
-        if themes is not None:
-            # Dictonnaire de themes
-            self.themes = themes
-        else:
-            self.themes = {}
+        # Dictionnaire de themes
+        self.themes = {}
         # Dictionnaire de notes
+
         self.notes = {
             "0": 0,
             "1": 0,
@@ -36,7 +34,7 @@ class listeAnime:
         # Dictionnaire des annees de sorties
         self.annees_sortie = {}
 
-    def set_themes(self):
+    def _set_themes(self):
         """Cette fonction initialise les thèmes de la liste"""
         # Initialisation des themes
         ids = [anime.id for anime in self.animes]
@@ -46,12 +44,7 @@ class listeAnime:
         # Initialisation des themes
         themeUtil.recupere_themes_from_list(self.themes, ids)
 
-    def print_themes(self):
-        """Affiche la liste des thèmes des animes contenus dans la liste"""
-        for key, values in self.themes.items():
-            print(key, " : ", values)
-
-    def set_notes(self):
+    def _set_notes(self):
         """Cette fonction initialise les notes de la liste"""
         # Récupération des scores des animes
         scores = [anime.score for anime in self.animes]
@@ -72,7 +65,7 @@ class listeAnime:
 
         dictionnaire.ajout_note(scores, self.notes)
 
-    def set_statuts(self):
+    def _set_statuts(self):
         """Cette fonction initialise les statuts de la liste"""
         # Récupération des statuts des animes
         statuts = [anime.etat for anime in self.animes]
@@ -81,16 +74,18 @@ class listeAnime:
 
         dictionnaire.ajout_statut(statuts, self.statuts)
 
-    def set_annees_sortie(self):
+    def _set_annees_sortie(self):
         "Cette fonction initialise les années de sortie de la liste"
         ids = [anime.id for anime in self.animes]
+
+        self.annees_sortie = {}
 
         dictionnaire.ajout_annee_sortie(ids, self.annees_sortie)
 
     def _afficher_nuage_de_mot(self):
         """Initialise les thèmes et affiche le nuage de mots"""
         # Initialisation des themes
-        self.set_themes()
+        self._set_themes()
         # Affichage du nuage de mots
         graphUtil.nuage_de_mot_dict(self.themes)
 
@@ -109,7 +104,7 @@ class listeAnime:
     def _afficher_graphique_annees_sortie(self):
         """Affichage du graphique des années de sortie des animes"""
         # Initialisation des années de sortie
-        self.set_annees_sortie()
+        self._set_annees_sortie()
         # Affichage du graphique des années de sortie
         graphUtil.graphique_annees_sortie(self.annees_sortie)
 
@@ -197,10 +192,10 @@ class listeAnime:
         """
 
         # Récupération des notes dans le dictionnaire
-        self.set_notes()
+        self._set_notes()
 
         # Récupération des statuts dans le dictionnaire
-        self.set_statuts()
+        self._set_statuts()
 
         # Nuage de mots
         self._confirmer_action(
@@ -234,6 +229,3 @@ class listeAnime:
             self._afficher_graphique_annees_sortie,
             nom_affiche_liste,
         )
-
-    def sauvegarde(self):
-        listUtil.sauvegarde_liste(self.animes)

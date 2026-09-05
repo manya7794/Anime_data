@@ -2,8 +2,7 @@ import json
 import pandas as pd
 import requests
 
-import csvUtil
-import xmlUtil
+from utils import csvUtil, xmlUtil
 
 
 def choix_recuperation_donnees_fichier():
