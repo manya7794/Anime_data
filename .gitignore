@@ -1,5 +1,5 @@
 __pycache__/
-config.py
 Documentation API.txt
 .vscode/
 venv/
+.env

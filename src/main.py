@@ -3,6 +3,7 @@ from utils import listUtil
 
 
 def main():
+
     user_name = input("Entrez le nom de l'utilisateur : ")
     liste_complete = listeAnime(user_name=user_name)
     liste_complete.menu_liste_anime()
