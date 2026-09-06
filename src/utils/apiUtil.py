@@ -61,34 +61,49 @@ def get_user_anime_list(
     premiere_requete = True
 
     while lien_api is not None:
-        try:
-            # Création de la requête vers l'API
-            print(f"Récupération de la page : {lien_api}")
-            reponse = requests.get(
-                # Adresse de la demande
-                lien_api,
-                # Ajout des headers
-                headers=headers,
-                # Ajout des paramètres
-                params=params if premiere_requete else None,
-                timeout=60,
-            )
+        tentatives = 0
 
-            # Vérification du statut de la réponse
-            reponse.raise_for_status()
+        while tentatives < nombre_tentatives:
+            try:
+                # Création de la requête vers l'API
+                print(f"Récupération de la page : {lien_api}")
+                reponse = requests.get(
+                    # Adresse de la demande
+                    lien_api,
+                    # Ajout des headers
+                    headers=headers,
+                    # Ajout des paramètres
+                    params=params if premiere_requete else None,
+                    timeout=20,
+                )
 
-            # Convertit la réponse en fichier json
-            reponse_json = reponse.json()
+                # Vérification du statut de la réponse
+                reponse.raise_for_status()
 
-        except (
-            requests.exceptions.Timeout,
-            requests.exceptions.ConnectionError,
-        ) as erreur:
-            print(f"Erreur réseau : {erreur}")
-            return None
+                # Convertit la réponse en fichier json
+                reponse_json = reponse.json()
 
-        except requests.exceptions.HTTPError as erreur:
-            print(f"Erreur HTTP lors de la récupération : {erreur}")
+                break
+
+            except (
+                requests.exceptions.Timeout,
+                requests.exceptions.ConnectionError,
+            ) as erreur:
+                tentatives += 1
+                print(
+                    f"Erreur réseau : {erreur} "
+                    f"(tentative {tentatives}/{nombre_tentatives})"
+                )
+
+                if tentatives < nombre_tentatives:
+                    time.sleep(delai_tentative)
+
+            except requests.exceptions.HTTPError as erreur:
+                print(f"Erreur HTTP lors de la récupération : {erreur}")
+                return None
+
+        else:
+            print("La récupération des données a échoué après plusieurs tentatives.")
             return None
 
         premiere_requete = False
@@ -118,6 +133,7 @@ def get_user_anime_list(
 def recupere_donnees_api(reponse_json):
     """Cette fonction récupère les éléments spécifiés pour chaque anime via l'API
 
+
     Args:
         reponse_json (dict): Données au format JSON
 
@@ -138,8 +154,8 @@ def recupere_donnees_api(reponse_json):
             etat=statut,
         )
 
-        # Ajout de l'anime à la liste
-        animes.append(anime)
+    # Ajout de l'anime à la liste
+    animes.append(anime)
 
     return animes
 
@@ -154,6 +170,7 @@ def recupere_annee_sortie_api_mal(id_anime):
     reponse = requests.get(
         f"https://api.myanimelist.net/v2/anime/{id_anime}?fields=start_season,status",
         headers=headers,
+        timeout=20,
     )
 
     # Vérification du statut de la réponse

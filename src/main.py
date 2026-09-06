@@ -1,6 +1,7 @@
 from config.settings import user_name
 from listeAnime import listeAnime
-from utils import apiUtil, listUtil
+from menu import Menu
+from utils import apiUtil, fichierUtil
 
 
 def main():
@@ -20,22 +21,30 @@ def main():
 
         # Récupération depuis un fichier
         if choix_utilisateur == "1":
-            animes = listUtil.choix_recuperation_donnees_fichier()
+            animes = fichierUtil.choix_recuperation_donnees_fichier()
 
         # Récupération depuis l'API
         if choix_utilisateur == "2":
             animes = apiUtil.get_user_anime_list(user_name)
 
     # Ajout des animes à la liste
-    if animes is not None:
-        liste_anime.animes.extend(animes)
+    if animes is None:
+        print("\nImpossible de récupérer les données des animes.")
+        print("Le programme va se terminer.")
+        return
 
-    liste_personnalisee = listUtil.extraire_nouvelle_liste_personnalisee(liste_anime)
+    liste_anime.animes.extend(animes)
+
+    menu = Menu(liste_anime)
+
+    liste_personnalisee = menu.extraire_nouvelle_liste_personnalisee()
 
     if liste_personnalisee is not None:
-        liste_personnalisee.menu_liste_anime()
+        menu = Menu(liste_personnalisee)
+        menu.afficher_menu()
     else:
-        liste_anime.menu_liste_anime()
+        menu = Menu(liste_anime)
+        menu.afficher_menu()
 
     print("\nFin du programme")
 

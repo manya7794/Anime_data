@@ -2,11 +2,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from utils.listUtil import (
-    create_dataframe_annees_sorties,
-    create_dataframe_notes,
-    create_dataframe_statut,
-)
+from utils import statistiquesUtil
 
 
 def nuage_de_mot(themes):
@@ -50,7 +46,9 @@ def histogramme_notes(dict_notes):
         dict_notes (dict): Dictionnaire contenant les notes et leur fréquence
     """
     # Création du dataframe
-    notes = create_dataframe_notes(dict_notes.keys(), dict_notes.values())
+    notes = statistiquesUtil.create_dataframe_notes(
+        dict_notes.keys(), dict_notes.values()
+    )
     # Création de l'histogramme
     sns.barplot(x=notes.Notes, y=notes.Frequence, data=notes)
     # Affichage de l'histogramme
@@ -63,7 +61,9 @@ def graphique_annees_sortie(dict_annees):
     Args:
         dict_annees (dict): Dictionnaire contenant les années et le nombre d'animes sortis durant chaque
     """
-    annees = create_dataframe_annees_sorties(dict_annees.keys(), dict_annees.values())
+    annees = statistiquesUtil.create_dataframe_annees_sorties(
+        dict_annees.keys(), dict_annees.values()
+    )
     # Création du graphique
     sns.lineplot(x=annees.Annee, y=annees.Frequence, data=annees)
     # Affichage du graphique
@@ -78,7 +78,9 @@ def histogramme_statuts(dict_statuts):
         chaque statut
     """
     # Création du dataframe
-    statuts = create_dataframe_statut(dict_statuts.keys(), dict_statuts.values())
+    statuts = statistiquesUtil.create_dataframe_statut(
+        dict_statuts.keys(), dict_statuts.values()
+    )
     # Création de l'histogramme
     sns.barplot(x=statuts.Statut, y=statuts.Frequence, data=statuts)
     # Affichage de l'histogramme
